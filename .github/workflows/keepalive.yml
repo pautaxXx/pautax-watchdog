@@ -1,0 +1,20 @@
+name: keepalive
+# GitHub switches off scheduled workflows in a repository with no activity for 60 days.
+# One empty commit a month keeps the watchdog's schedule alive.
+on:
+  schedule:
+    - cron: "17 13 1 * *"
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  keepalive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config user.name "pautax-watchdog"
+          git config user.email "noreply@pautax.local"
+          git commit --allow-empty -m "keepalive $(date -u +%F)"
+          git push
